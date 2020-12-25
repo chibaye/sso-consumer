@@ -3,8 +3,13 @@ import {serialize} from 'cookie'
 const TOKEN_NAME = 'session'
 const MAX_AGE = 60 * 60 * 24 // 24 hours
 
+const redirect = res => res.redirect('https://sso-server.vercel.app')
+
 const auth = async (req, res, next) => {
-    const { ssoToken: token } = req.query
+    const {query} = req
+    const { ssoToken: token } = query
+
+    if (!token || !req.cookies) return redirect(res)
 
     if (token) {
         const cookie = serialize(TOKEN_NAME, token, {
@@ -18,7 +23,7 @@ const auth = async (req, res, next) => {
 
         res.setHeader('Set-Cookie', cookie)
 
-        return res.redirect('https://sso-server.vercel.app')
+        return redirect(res)
     }
 
     return next()
