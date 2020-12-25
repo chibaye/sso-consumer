@@ -10,13 +10,13 @@ export const getServerSideProps = async ctx => {
     const {req, res} = ctx
     const {session} = parse(req.headers?.cookie || '')
 
-    const uri = req.uri || ''
+    const url = req.url || ''
 
-    if (uri.match(/ssoToken/gi)) {
-        const resp = await fetch('/api/session', {
+    if (url.match(/ssoToken/gi)) {
+        const resp = await fetch('https://sso-consumer.herokuapp.com/api/session', {
             headers, method: 'POST',
             withCredential: true,
-            body: JSON.stringify({ssoToken: uri.split('ssoToken=')[1]})
+            body: JSON.stringify({ssoToken: url.split('ssoToken=')[1]})
         })
 
         console.log({resp})
