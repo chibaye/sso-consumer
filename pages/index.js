@@ -10,19 +10,17 @@ export const getServerSideProps = async ctx => {
     const {req, res} = ctx
     const {session} = parse(req.headers?.cookie || '')
 
-    console.log({session})
-
-    if (!session) {
-        res.writeHead(303, {Location: 'https://sso-server.vercel.app/login?refid=consumer'})
-        res.end()
-    }
-
     if (req.uri.match(/refid/gi)) {
         await fetch('/api/session', {
             headers, method: 'POST',
             withCredential: true,
             body: JSON.stringify({ssoToken: req.url.split('=')[1]})
         })
+    }
+
+    if (!session) {
+        res.writeHead(303, {Location: 'https://sso-server.vercel.app/login?refid=consumer'})
+        res.end()
     }
 
     return {
