@@ -19,8 +19,6 @@ const Session = {
             })
 
             res.setHeader('Set-Cookie', cookie)
-
-            return res.redirect('https://sso-server.vercel.app')
         }
 
         return res.send({message: 'ok'})
