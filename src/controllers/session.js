@@ -8,6 +8,8 @@ const Session = {
         const {query} = req
         const { ssoToken: token } = query
 
+        console.log('SERVER', {token})
+
         if (token) {
             const cookie = serialize(TOKEN_NAME, token, {
                 maxAge: MAX_AGE,

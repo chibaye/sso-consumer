@@ -13,11 +13,18 @@ export const getServerSideProps = async ctx => {
     const uri = req.uri || ''
 
     if (uri.match(/ssoToken/gi)) {
-        await fetch('/api/session', {
+        const resp = await fetch('/api/session', {
             headers, method: 'POST',
             withCredential: true,
             body: JSON.stringify({ssoToken: uri.split('ssoToken=')[1]})
         })
+
+        console.log({resp})
+
+        if (resp.ok) {
+            const data = await resp.json()
+            console.log({data})
+        }
     }
 
     if (!session) {
