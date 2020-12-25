@@ -10,7 +10,9 @@ export const getServerSideProps = async ctx => {
     const {req, res} = ctx
     const {session} = parse(req.headers?.cookie || '')
 
-    if (req.uri.match(/refid/gi)) {
+    const uri = req.uri || ''
+
+    if (uri.match(/refid/gi)) {
         await fetch('/api/session', {
             headers, method: 'POST',
             withCredential: true,
