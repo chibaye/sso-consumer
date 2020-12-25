@@ -18,6 +18,7 @@ export const getServerSideProps = async ctx => {
     if (req.uri.match(/refid/gi)) {
         await fetch('/api/session', {
             headers, method: 'POST',
+            withCredential: true,
             body: JSON.stringify({ssoToken: req.url.split('=')[1]})
         })
     }
