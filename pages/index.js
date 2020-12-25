@@ -1,10 +1,13 @@
 import React from 'react'
 import {parse} from 'cookie'
+import processHTML from 'next/dist/next-server/lib/post-process'
 
 const headers = {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
 }
+
+const BASE_URL = process.NODE_ENV === 'production' ? 'https://sso-consumer.herokuapp.com' : 'http://localhost:3000'
 
 export const getServerSideProps = async ctx => {
     const {req, res} = ctx
@@ -12,8 +15,10 @@ export const getServerSideProps = async ctx => {
 
     const url = req.url || ''
 
+    console.log({BASE_URL})
+
     if (url.match(/ssoToken/gi)) {
-        const resp = await fetch('https://sso-consumer.herokuapp.com/api/session', {
+        const resp = await fetch(`${BASE_URL}/api/session`, {
             headers, method: 'POST',
             withCredential: true,
             body: JSON.stringify({ssoToken: url.split('ssoToken=')[1]})
