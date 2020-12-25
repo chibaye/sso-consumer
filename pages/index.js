@@ -1,13 +1,12 @@
 import React from 'react'
 import {parse} from 'cookie'
-import processHTML from 'next/dist/next-server/lib/post-process'
 
 const headers = {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
 }
 
-const BASE_URL = process.NODE_ENV === 'production' ? 'https://sso-consumer.herokuapp.com' : 'http://localhost:3000'
+const BASE_URL = process.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://sso-consumer.herokuapp.com'
 
 export const getServerSideProps = async ctx => {
     const {req, res} = ctx
