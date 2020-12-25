@@ -1,11 +1,17 @@
 import React from 'react'
+import {parse} from 'cookie'
 
-export const getStaticProps = async () => {
-    const resp = await fetch('https://sso-consumer.herokuapp.com/api/profile')
-    const props = await resp.json()
+export const getServerSideProps = async ctx => {
+    const {req, res} = ctx
+    const {session} = parse(req.headers?.cookie || '')
+
+    if (!session) {
+        res.writeHead(303, {Location: 'https://sso-server.vercel.app/login?refid=consumer'})
+        res.end()
+    }
 
     return {
-        props
+        props: {}
     }
 }
 
