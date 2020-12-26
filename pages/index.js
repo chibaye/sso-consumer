@@ -1,12 +1,8 @@
 import React from 'react'
-import {parse} from 'cookie'
+import {parse, serialize} from 'cookie'
 
-const headers = {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json'
-}
-
-const BASE_URL = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://sso-consumer.herokuapp.com'
+const TOKEN_NAME = 'session'
+const MAX_AGE = 60 * 60 * 24 // 24 hours
 
 export const getServerSideProps = async ctx => {
     const {req, res} = ctx
@@ -16,23 +12,26 @@ export const getServerSideProps = async ctx => {
     let hasAuth = !!session
 
     if (url.match(/ssoToken/gi) && !session) {
+        const {ssoToken} = parse(url.slice(2))
 
-        const resp = await fetch(`${BASE_URL}/api/session`, {
-            headers, method: 'POST',
-            withCredential: true,
-            body: JSON.stringify({token: url.split('ssoToken=')[1]})
+        const cookie = serialize(TOKEN_NAME, ssoToken, {
+            maxAge: MAX_AGE,
+            expires: new Date(Date.now() + MAX_AGE * 1000),
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            path: '/',
+            sameSite: 'lax'
         })
 
-        if (resp.ok) {
-            const data = await resp.json()
-            hasAuth = !!data.session
-        }
+        res.setHeader('Set-Cookie', cookie)
+        hasAuth = true
     }
 
     if (!hasAuth) {
         res.writeHead(303, {Location: 'https://sso-server.vercel.app/login?refid=consumer'})
         res.end()
     }
+
 
     return {
         props: {}
