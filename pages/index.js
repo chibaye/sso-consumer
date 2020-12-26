@@ -6,32 +6,30 @@ const headers = {
     'Content-Type': 'application/json'
 }
 
-const BASE_URL = process.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://sso-consumer.herokuapp.com'
+const BASE_URL = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://sso-consumer.herokuapp.com'
 
 export const getServerSideProps = async ctx => {
     const {req, res} = ctx
     const {session} = parse(req.headers?.cookie || '')
 
     const url = req.url || ''
+    let hasAuth = !!session
 
-    console.log({BASE_URL})
+    if (url.match(/ssoToken/gi) && !session) {
 
-    if (url.match(/ssoToken/gi)) {
         const resp = await fetch(`${BASE_URL}/api/session`, {
             headers, method: 'POST',
             withCredential: true,
-            body: JSON.stringify({ssoToken: url.split('ssoToken=')[1]})
+            body: JSON.stringify({token: url.split('ssoToken=')[1]})
         })
-
-        console.log({resp})
 
         if (resp.ok) {
             const data = await resp.json()
-            console.log({data})
+            hasAuth = !!data.session
         }
     }
 
-    if (!session) {
+    if (!hasAuth) {
         res.writeHead(303, {Location: 'https://sso-server.vercel.app/login?refid=consumer'})
         res.end()
     }
