@@ -38,8 +38,9 @@ export const getServerSideProps = async ctx => {
     }
 }
 
-const Home = () => <h1>
-    Secure page for the SSO Consumer app
-</h1>
+const Home = () => <div>
+    <h1>Secure page for the SSO Consumer app</h1>
+    <a href='https://sso-server.vercel.app'>Go to the Server app</a>
+</div>
 
 export default Home
