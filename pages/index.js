@@ -38,8 +38,8 @@ export const getServerSideProps = async ctx => {
     }
 }
 
-const Home = props => <div>
-    {JSON.stringify(props)}
-</div>
+const Home = () => <h1>
+    You're viewing a secure page for the SSO Consumer app
+</h1>
 
 export default Home
